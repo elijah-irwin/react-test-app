@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classes from './App.css';
-import Person from './Person/Person';
-import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
+import Persons from '../components/Persons/Persons';
+import Cockpit from '../components/Cockpit/Cockpit';
 
 class App extends Component {
   
@@ -11,7 +11,7 @@ class App extends Component {
       {id: 2, name: 'Skye', age: 24},
       {id: 3, name: 'Nicole', age: 17}
     ],
-    showList: false
+    showPersons: false
   }
 
   // change username based on input value
@@ -41,8 +41,8 @@ class App extends Component {
 
   // visually shows/hides the persons list content when the show people button is clicked
   togglePersonsHandler = () => {
-    const show = this.state.showList;
-    this.setState({showList: !show})
+    const show = this.state.showPersons;
+    this.setState({showPersons: !show})
   };
 
   // deletes person from state list when first paragraph is clicked on
@@ -59,37 +59,22 @@ class App extends Component {
 
   render() {
     let persons = null;
-    let btnClass = '';
 
-    if (this.state.showList) {
-      persons = (
-        <div>
-          { this.state.persons.map((person, index) => {
-            return <ErrorBoundary key={person.id}>
-                <Person 
-                name={person.name} 
-                age={person.age}
-                click={() => this.deletePersonHandler(index)}
-                changed={(event) => this.nameChangedHandler(event, person.id)}/>
-              </ErrorBoundary>
-          }) }    
-        </div>
-      );
-      btnClass = classes.Red;
+    if (this.state.showPersons) {
+      persons = <Persons
+            persons={this.state.persons}
+            clicked={this.deletePersonHandler}
+            changed={this.nameChangedHandler}
+          />
     }
-
-    const assignedClasses = [];
-    if(this.state.persons.length <= 2) assignedClasses.push(classes.red);
-    if(this.state.persons.length <= 1) assignedClasses.push(classes.bold);
 
     return (
       <div className={classes.App}>
-        <h1>Mak's React Apperino</h1>
-        <p className={assignedClasses.join(' ')}>FeelsGoodMan</p>
-
-        {/* this is less efficient than switchHandler.bind */}
-        <button className={btnClass} onClick={this.togglePersonsHandler}>Show People</button>
-
+        <Cockpit
+          showPersons={this.state.showPersons}
+          persons={this.state.persons}
+          clicked={this.togglePersonsHandler} 
+        />
         { persons }
       </div>
     );
